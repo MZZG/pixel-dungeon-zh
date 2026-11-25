@@ -4,17 +4,30 @@
 
 本项目的中文术语表与字体渲染思路参考了开源衍生版 [Shattered Pixel Dungeon](https://github.com/00-Evan/shattered-pixel-dungeon)，并针对原版硬编码文本与 ASCII 位图字体的架构进行了引擎级改造。
 
+> **构建声明**：本项目由 **Gemini 4H（Gemini 4 Hydrogen High）** 协助构建。
+
 ---
 
 ## 直接下载使用（Releases 发行版）
 
-如果你不想自己配置 JDK 和 Python 编译，可以直接前往本仓库的 [Releases 页面](https://github.com/MZZG/pixel-dungeon-zh/releases) 下载编译好的文件：
+前往本仓库的 [Releases 页面](https://github.com/MZZG/pixel-dungeon-zh/releases) 下载编译好的文件即可直接游玩：
 
-1. 下载发行版中的 `desktop-1.9.2-steam-zh.jar`（已编译完成的简体中文版游戏包）；发行版中同时附带了原版二进制 `desktop-1.9.2-steam-original.jar` 供备份/对照。
-2. 打开你本地的游戏安装目录（例如 `.../SteamLibrary/steamapps/common/Pixel Dungeon/`）。
-3. 将原目录下的 `desktop-1.9.2-steam.jar` 重命名备份（例如改为 `desktop-1.9.2-steam.jar.bak`）。
-4. 将下载的 `desktop-1.9.2-steam-zh.jar` 改名为 `desktop-1.9.2-steam.jar` 并放入该目录。
-5. 通过 Steam 或双击 `PD.exe` 启动游戏即可（请确保 Steam 处于运行状态，且不要直接用 64 位系统 Java 双击 `.jar`，`PD.exe` 会自动调用自带的 32 位 `jre`）。
+### 方式一：脱离 Steam 独立运行（无需启动 Steam）
+
+1. 在 Releases 中同时下载 `desktop-1.9.2-steam-zh.jar` 与 `PixelDungeon-ZH-Launcher.exe`，放在同一文件夹中。
+2. Windows 用户直接双击 `PixelDungeon-ZH-Launcher.exe` 即可离线启动游戏（无需 Steam 客户端，也支持使用系统已安装的 Java 8+ 或目录内自带的 `jre`）。
+3. macOS / Linux 用户或命令行启动可使用：
+   ```bash
+   java -Xmx1G -cp desktop-1.9.2-steam-zh.jar com.watabou.pd.desktop.StandaloneLauncher
+   ```
+   （若从原版入口 `DesktopLauncher` 启动，传入 `--no-steam` 参数同样可脱离 Steam 运行。）
+
+### 方式二：替换进 Steam 游戏目录（保留 Steam 成就与统计）
+
+1. 打开本地的 Steam 游戏目录（例如 `.../SteamLibrary/steamapps/common/Pixel Dungeon/`）。
+2. 备份原目录下的 `desktop-1.9.2-steam.jar`（例如重命名为 `desktop-1.9.2-steam.jar.bak`）。
+3. 下载 `desktop-1.9.2-steam-zh.jar`，将其重命名为 `desktop-1.9.2-steam.jar` 并放入游戏目录。
+4. 通过 Steam 或运行目录内的 `PD.exe` 启动游戏（此方式需保持 Steam 运行）。
 
 ---
 
@@ -22,8 +35,8 @@
 
 1. **混合动态中文字体图集（`BitmapText.java`）**
    * **ASCII 字符与数字**：完整保留原版 `font1x.png` ~ `font3x.png` 像素字形，维持原汁原味的像素风格。
-   * **中文及全角符号**：按需通过 Java2D 光栅化 `assets_extra/fonts/droid_sans.ttf` 并自动生成 1px 黑色投影，增量写入 `1024x1024` / `2048x2048` 纹理图集，兼容原版卷轴反色着色器（`WndStory`）。
-   * 无需额外 native 动态链接库（如 `gdx-freetype.dll`），跨平台兼容原版自带的 Java 8 运行环境。
+   * **中文及全角符号**：按需通过 Java2D 光栅化 `assets_extra/fonts/droid_sans.ttf` 并自动生成 1px 黑色投影，增量写入 `1024x1024` 纹理图集，兼容原版卷轴反色着色器（`WndStory`）。
+   * 无需额外 native 动态链接库，跨平台兼容 Java 8 及更高版本。
 
 2. **中文自动换行与排版（`BitmapTextMultiline.java` / `GameLog.java`）**
    * 实现 CJK 逐字换行、英文/数字连词不断行、开/闭标点禁则（避免句号、逗号出现在行首，或左括号出现在行尾）。
@@ -35,6 +48,9 @@
    * 在 `WndItem` 中通过 `actionLabel()` 将物品操作按钮显示为中文，同时保持内部 `AC_*` 动作常量不变，确保快捷栏、背包筛选与存档 100% 兼容。
    * 覆盖主界面、菜单设置、键位说明、英雄职业/转职、怪物/NPC 对话、道具/药剂/卷轴/法杖/戒指、地形、植物、徽章、章节剧情等全部文本。
 
+4. **独立离线启动支持（`StandaloneLauncher.java` / `OfflineDesktopSupport.java`）**
+   * 新增不依赖 `steamworks4j` 的独立启动入口与 Windows 图形化启动器源码（`tools/launcher/StandaloneLauncher.cs`）。
+
 ---
 
 ## 目录结构
@@ -42,19 +58,20 @@
 ```text
 pixel-dungeon-zh/
 ├── assets_extra/
-│   └── fonts/droid_sans.ttf   # CJK 字体文件
-├── src/                       # 修改与汉化后的 Java 源码（310 个文件）
+│   └── fonts/droid_sans.ttf              # CJK 字体文件
+├── src/                                  # 修改与汉化后的 Java 源码（312 个文件）
 └── tools/
-    ├── build.py               # 跨平台自动构建与打包脚本
-    ├── patch_engine.py        # 源码补丁辅助工具
-    └── patches_part1~4.py     # 各模块汉化补丁记录
+    ├── build.py                          # 跨平台自动构建与打包脚本
+    ├── patch_engine.py                   # 源码补丁辅助工具
+    ├── patches_part1~4.py                # 各模块汉化补丁记录
+    └── launcher/StandaloneLauncher.cs    # 脱离 Steam 的 Windows 启动器源码
 ```
 
 ---
 
 ## 自行从源码编译
 
-> 注：本代码仓库仅保存修改后的源码与字体资源，已编译的汉化包与原版游戏二进制文件请从 [Releases 页面](https://github.com/MZZG/pixel-dungeon-zh/releases) 下载。如需自行编译，你需要在本地准备原版 `desktop-1.9.2-steam.jar`。
+> 注：本代码仓库仅保存修改后的源码、字体资源与构建工具；如需自行编译，需要在本地准备原版 `desktop-1.9.2-steam.jar`。
 
 ### 依赖环境
 
@@ -70,11 +87,11 @@ pixel-dungeon-zh/
    cd pixel-dungeon-zh
    ```
 
-2. 运行构建脚本（脚本会自动尝试查找本地 Steam 安装目录中的 `desktop-1.9.2-steam.jar`）：
+2. 运行构建脚本（会自动尝试查找本地 Steam 目录中的 `desktop-1.9.2-steam.jar`）：
    ```bash
    python tools/build.py
    ```
-   如果游戏安装在自定义路径，可通过 `--jar` 手动指定（或设置环境变量 `PD_JAR`）：
+   若游戏安装在自定义路径，可通过 `--jar` 指定（或设置环境变量 `PD_JAR`）：
    ```bash
    python tools/build.py --jar "/path/to/Pixel Dungeon/desktop-1.9.2-steam.jar"
    ```
@@ -83,15 +100,17 @@ pixel-dungeon-zh/
 3. **一键安装到游戏目录（自动备份原文件为 `.bak`）**：
    ```bash
    python tools/build.py --install
-   # 如需指定游戏 JAR 路径：
-   python tools/build.py --jar "/path/to/Pixel Dungeon/desktop-1.9.2-steam.jar" --install
    ```
 
 4. **恢复英文原版**：
    ```bash
    python tools/build.py --restore
-   # 或指定路径：
-   python tools/build.py --jar "/path/to/Pixel Dungeon/desktop-1.9.2-steam.jar" --restore
+   ```
+
+5. **编译 Windows 独立启动器（可选）**：
+   使用 Windows 自带的 .NET `csc.exe` 即可编译 `tools/launcher/StandaloneLauncher.cs`：
+   ```powershell
+   C:\Windows\Microsoft.NET\Framework64\v4.0.30319\csc.exe /optimize+ /target:winexe /r:System.Windows.Forms.dll /r:System.Drawing.dll /out:dist\PixelDungeon-ZH-Launcher.exe tools\launcher\StandaloneLauncher.cs
    ```
 
 ---
@@ -100,4 +119,4 @@ pixel-dungeon-zh/
 
 * 原作 **Pixel Dungeon** by [Watabou](https://github.com/watabou/pixel-dungeon)
 * 中文术语与字体参考 **Shattered Pixel Dungeon** by [00-Evan](https://github.com/00-Evan/shattered-pixel-dungeon)
-* 本项目遵循 **GPL-3.0** 开源协议。
+* 本项目遵循 **GPL-3.0** 开源协议，并由 **Gemini 4H** 协助构建。
