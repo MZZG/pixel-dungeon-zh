@@ -1,0 +1,13 @@
+# Build outputs & extracted game assets (never commit proprietary binaries)
+build/
+dist/
+game_extract/
+src_decompiled/
+refs/
+*.class
+*.jar
+*.jar.bak
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
