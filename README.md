@@ -1,8 +1,20 @@
-# Pixel Dungeon (Steam 1.9.2) 简体中文汉化补丁项目
+# Pixel Dungeon (Steam 1.9.2) 简体中文汉化版
 
-针对 Steam 版原版《像素地牢》（**Pixel Dungeon v1.9.2**, `desktop-1.9.2-steam.jar`）的简体中文源码级汉化工程。
+基于 Watabou 开源原版 [Pixel Dungeon](https://github.com/watabou/pixel-dungeon)（Steam 1.9.2，`desktop-1.9.2-steam.jar`）修改的简体中文汉化项目。
 
-本项目的中文术语表与字体渲染思路参考了开源衍生版 [Shattered Pixel Dungeon](https://github.com/00-Evan/shattered-pixel-dungeon)，并针对原版 [Pixel Dungeon](https://github.com/watabou/pixel-dungeon) 硬编码文本与 ASCII 位图字体的架构进行了引擎级改造。
+本项目的中文术语表与字体渲染思路参考了开源衍生版 [Shattered Pixel Dungeon](https://github.com/00-Evan/shattered-pixel-dungeon)，并针对原版硬编码文本与 ASCII 位图字体的架构进行了引擎级改造。
+
+---
+
+## 直接下载使用（Releases 发行版）
+
+如果你不想自己配置 JDK 和 Python 编译，可以直接前往本仓库的 [Releases 页面](https://github.com/MZZG/pixel-dungeon-zh/releases) 下载编译好的文件：
+
+1. 下载发行版中的 `desktop-1.9.2-steam-zh.jar`（已编译完成的简体中文版游戏包）；发行版中同时附带了原版二进制 `desktop-1.9.2-steam-original.jar` 供备份/对照。
+2. 打开你本地的游戏安装目录（例如 `.../SteamLibrary/steamapps/common/Pixel Dungeon/`）。
+3. 将原目录下的 `desktop-1.9.2-steam.jar` 重命名备份（例如改为 `desktop-1.9.2-steam.jar.bak`）。
+4. 将下载的 `desktop-1.9.2-steam-zh.jar` 改名为 `desktop-1.9.2-steam.jar` 并放入该目录。
+5. 通过 Steam 或双击 `PD.exe` 启动游戏即可（请确保 Steam 处于运行状态，且不要直接用 64 位系统 Java 双击 `.jar`，`PD.exe` 会自动调用自带的 32 位 `jre`）。
 
 ---
 
@@ -40,9 +52,9 @@ pixel-dungeon-zh/
 
 ---
 
-## 环境要求与构建方法
+## 自行从源码编译
 
-> 出于版权考虑，本仓库**不包含**原版游戏二进制文件与资源，你需要在本地拥有 Steam 正版《Pixel Dungeon》。
+> 注：本代码仓库仅保存修改后的源码与字体资源，已编译的汉化包与原版游戏二进制文件请从 [Releases 页面](https://github.com/MZZG/pixel-dungeon-zh/releases) 下载。如需自行编译，你需要在本地准备原版 `desktop-1.9.2-steam.jar`。
 
 ### 依赖环境
 

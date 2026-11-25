@@ -355,7 +355,7 @@ public class BitmapText extends Visual {
         }
 
         public static Font colorMarked(GdxTexture bmp, int height, int color, String chars) {
-            int atlasSize = height <= 14 ? 1024 : 2048;
+            int atlasSize = 1024;
             Pixmap atlasPm = new Pixmap(atlasSize, atlasSize, Pixmap.Format.RGBA8888);
             atlasPm.setBlending(Pixmap.Blending.None);
             SmartTexture atlasTex = new SmartTexture(new GdxTexture(atlasPm));
